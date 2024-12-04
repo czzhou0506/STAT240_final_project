@@ -89,4 +89,29 @@ resid_plot(data1.0)
 #Constant Variance Satisfied: Equal Spread Across X
 ```
 
+```{r}
+data_mod = lm(y ~ x, data = merged_data)
+data_summary = summary(data_mod) 
+data_summary
+
+n = nrow(merged_data)
+
+coefficients = data_summary$coefficients
+slope_estimate = coefficients["x", "Estimate"]
+standard_error = coefficients["x", "Std. Error"]
+
+critical_value = qt(0.99, df = n - 2)#98% CI
+
+c(slope_estimate - critical_value*standard_error, slope_estimate + critical_value*standard_error)
+
+
+#H0: slope = 0
+#HA: slope != 0
+t_obs_0 = (slope_estimate - 0) / standard_error
+p_value = pt(t_obs_0, df = n-2, lower.tail = F)
+p_value * 2
+
+#an extremely low p-value, which leads to rejecting H0: true slope = 0, and interval does not include 0. Both results suggest that the true slope is very unlikely to be 0.
+
+```
 
