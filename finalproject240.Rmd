@@ -1,0 +1,92 @@
+---
+title: "Final project Stat240"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	error = TRUE,
+	fig.height = 3,
+	message = FALSE,
+	warning = FALSE
+)
+library(tidyverse)
+source("C:/Users/czzho/OneDrive/UW - madison - Cloud/STAT240/scripts/ggprob.R")
+```
+
+```{r}
+CO2 <- read_csv("C:/Users/czzho/OneDrive/UW - madison - Cloud/STAT240/data/co2-mm-mlo.csv")
+
+global_temp <- read_csv("C:/Users/czzho/OneDrive/UW - madison - Cloud/STAT240/data/monthly.csv")
+```
+```{r}
+head(CO2, 5)
+head(global_temp, 5)
+
+
+```
+```{r}
+# clean data
+CO2 <- CO2 %>%
+  select(-`Decimal Date`, -Interpolated, -Trend, -`Number of Days`) %>%
+  rename(Month = `Date`)
+
+global_temp <- global_temp %>%
+  select(-Source) %>%  
+  rename(Month = `Year`)
+
+CO2
+global_temp
+
+
+merged_data <- merge(CO2, global_temp, by="Month")
+head(merged_data, 5)
+```
+
+
+```{r}
+#correlation
+#strong positve
+
+x = merged_data$Average
+y = merged_data$Mean
+
+cor(x, y)
+
+
+#cor_plot
+cor_plot = function(x,y)
+{
+  ggplot(tibble(x,y), aes(x=x, y=y)) +
+    geom_point() +
+    geom_smooth(se = FALSE, method = "lm") +
+    geom_vline(xintercept = mean(x), color = "red", linetype = "dashed") +
+    geom_hline(yintercept = mean(y), color = "red", linetype = "dashed") +
+    ggtitle(str_c("r ≈ ", round(cor(x,y),2))) +
+  theme_bw() +
+  theme(text = element_text(size = 20)) 
+}
+cor_plot(x, y)
+
+
+
+
+resid_plot <- function(data) {
+  # assumes the columns are named "x" and "y" respectively
+  data %>%
+    mutate(resid = resid(lm(y~x, data))) %>% 
+    ggplot(aes(x, resid)) +
+    geom_point() +
+    geom_hline(yintercept = 0)
+}
+
+data1.0 = tibble(x , y)
+resid_plot(data1.0)
+
+#"Linearity Satisfied: No Curved Pattern Present")
+#Normality Satisfied: Residuals Symmetric Around 0
+#Constant Variance Satisfied: Equal Spread Across X
+```
+
+
