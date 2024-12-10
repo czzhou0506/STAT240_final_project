@@ -56,16 +56,16 @@ cor(x, y)
 
 
 #cor_plot
-cor_plot = function(x,y)
-{
-  ggplot(tibble(x,y), aes(x=x, y=y)) +
+cor_plot <- function(x, y) {
+  ggplot(tibble(x, y), aes(x = x, y = y)) +
     geom_point() +
     geom_smooth(se = FALSE, method = "lm") +
     geom_vline(xintercept = mean(x), color = "red", linetype = "dashed") +
     geom_hline(yintercept = mean(y), color = "red", linetype = "dashed") +
-    ggtitle(str_c("r ≈ ", round(cor(x,y),2))) +
-  theme_bw() +
-  theme(text = element_text(size = 20)) 
+    ggtitle(str_c("r ≈ ", round(cor(x, y), 2))) +
+    labs(x = "CO2 Concentration (monthly)", y = "Global Average Temperature (monthly)") +
+    theme_bw() +
+    theme(text = element_text(size = 10))
 }
 cor_plot(x, y)
 
@@ -75,18 +75,23 @@ cor_plot(x, y)
 resid_plot <- function(data) {
   # assumes the columns are named "x" and "y" respectively
   data %>%
-    mutate(resid = resid(lm(y~x, data))) %>% 
+    mutate(resid = resid(lm(y ~ x, data))) %>% 
     ggplot(aes(x, resid)) +
     geom_point() +
-    geom_hline(yintercept = 0)
+    geom_hline(yintercept = 0, color = "blue") +
+    labs(x = "CO2 Concentration (monthly)")
 }
 
-data1.0 = tibble(x , y)
+data1.0 <- tibble(x, y)
 resid_plot(data1.0)
 
 #"Linearity Satisfied: No Curved Pattern Present")
 #Normality Satisfied: Residuals Symmetric Around 0
 #Constant Variance Satisfied: Equal Spread Across X
+```
+```{r}
+ggplot(merged_data, aes(x, y)) +
+  geom_point()
 ```
 
 ```{r}
